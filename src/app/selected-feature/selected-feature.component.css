@@ -1,0 +1,18 @@
+.selected_area_container {
+	background-color: #f3f3f3;
+	color: '#868686';
+    font-size: 20px;
+    padding: 10px;
+}
+
+.selected_area_container > * {
+	display: inline-block;
+}
+
+.selected_area {
+	width: 200px;
+	background-color: #f9f9f9;
+	margin-left: 10px;
+	margin-right: 20px;
+	font-size: 14px;
+}

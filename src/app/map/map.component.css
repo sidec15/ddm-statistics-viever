@@ -1,0 +1,41 @@
+.map {
+    width: 100%;
+    height: 550px;
+    position: relatuve;
+    /* display: inline-block; */
+    /* margin: 0px 10px 0 10px; */
+}
+
+:host /deep/ .map .ol-zoom {
+    margin-left: 50px;
+}
+
+:host /deep/ .map .ol-zoom.shifted {
+    margin-left: 280px;
+}
+
+#map:focus {
+    /* outline: #4A74A8 solid 0.15em; */
+    outline: none;
+}
+
+
+
+/* 
+a.skiplink {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
+a.skiplink:focus {
+    clip: auto;
+    height: auto;
+    width: auto;
+    background-color: #fff;
+    padding: 0.3em;
+} */

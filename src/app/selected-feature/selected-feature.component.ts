@@ -30,5 +30,14 @@ export class SelectedFeatureComponent implements OnInit, OnDestroy {
 
   openStatistics(): void {
     console.log('Open stats');
+    setTimeout(() => {
+      const url1 = 'https://ddmpublic.blob.core.windows.net/ddmstatistics/rome-fco_general_statistics.html';
+      window.open(url1);
+    }, 1000);
+    setTimeout(() => {
+      const url2 = 'https://ddmpublic.blob.core.windows.net/ddmstatistics/rome-fco_trajectory_statistics.html';
+      window.open(url2);
+    }, 500);
+
   }
 }

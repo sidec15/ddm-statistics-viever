@@ -2,5 +2,6 @@
 	<label class="selected_area_label">Selected area</label>
 	<div class="selected_area">{{selectedFeature ? selectedFeature.name : '&nbsp;'}}</div>
 </div>
-<button class="button button_open moved_left open_stats" [class.disabled]="!selectedFeature" [disabled]="!selectedFeature" (click)="openStatistics()">Open</button>
+<button class="button button_open moved_left open_stats" [class.disabled]="!selectedFeature" [disabled]="!selectedFeature" 
+(click)="openStatistics()">Open</button>
 

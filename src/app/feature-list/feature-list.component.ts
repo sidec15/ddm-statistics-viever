@@ -28,9 +28,14 @@ export class FeatureListComponent implements OnInit {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;
       const features: SimpleFeature[] = [];
-      textFeatures.forEach((element: { properties: { reg_name: any; }; }) => {
-        const name = element.properties.reg_name;
-        features.push({type: this.mapService.REGION_TYPE_KEY, name});
+      textFeatures.forEach((element: { properties: { reg_istat_code: string; reg_name: string; }; }) => {
+        // features.push({type: this.mapService.REGION_TYPE_KEY, name});
+        features.push(new SimpleFeature(
+          element.properties.reg_istat_code
+          , this.mapService.REGION_TYPE_KEY
+          , element.properties.reg_name
+          )
+        );
       });
       features.sort(SimpleFeature.compareOnName);
       Array.prototype.push.apply(this.features, features);
@@ -42,28 +47,19 @@ export class FeatureListComponent implements OnInit {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;
       const features: SimpleFeature[] = [];
-      textFeatures.forEach((element: { properties: { prov_name: any; }; }) => {
-        const name = element.properties.prov_name;
-        features.push({type: this.mapService.PROVINCE_TYPE_KEY, name});
+      textFeatures.forEach((element: { properties: { prov_istat_code: string; prov_name: string; }; }) => {
+        // features.push({type: this.mapService.PROVINCE_TYPE_KEY, name});
+          features.push(new SimpleFeature(
+            element.properties.prov_istat_code
+            , this.mapService.PROVINCE_TYPE_KEY
+            , element.properties.prov_name
+            )
+          );
       });
       features.sort(SimpleFeature.compareOnName);
       Array.prototype.push.apply(this.features, features);
       // console.log(obj);
     });
-
-
-
-    // tslint:disable-next-line: forin
-    // for (const key in mapfeatures) {
-    //   const feature = mapfeatures[key];
-    //   let type = null;
-    //   if (feature.get(this.mapService.PROVINCE_NAME_KEY)) {
-    //     type = 'REG';
-    //   } else {
-    //     type = 'PROV';
-    //   }
-    //   this.features.push({type, name: key});
-    // }
 
   }
 

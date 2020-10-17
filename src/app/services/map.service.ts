@@ -20,7 +20,9 @@ const center = [12.509623, 41.913351];
 const centerMarcator = fromLonLat(center);
 
 const REGION_NAME_KEY = 'reg_name';
+const REGION_CODE = 'reg_istat_code';
 const PROVINCE_NAME_KEY = 'prov_name';
+const PROVINCE_CODE = 'prov_istat_code';
 
 const GEOJSON_FILE_REGIONS = 'assets/data/geojson/limits_IT_regions.geojson';
 const GEOJSON_FILE_PROVINCES = 'assets/data/geojson/limits_IT_provinces.geojson';
@@ -92,7 +94,10 @@ export class MapService {
     });
 
     layerRegions.getSource().on('addfeature', (event) => {
-      this.featuresMap[event.feature.get('reg_name')] = event.feature;
+      const type = this.REGION_TYPE_KEY;
+      const code = event.feature.get(REGION_CODE);
+      const id = SimpleFeature.createId(code, type);
+      this.featuresMap[id] = event.feature;
     });
 
     const layerProvinces = new VectorLayer({
@@ -110,7 +115,10 @@ export class MapService {
     });
 
     layerProvinces.getSource().on('addfeature', (event) => {
-      this.featuresMap[event.feature.get('prov_name')] = event.feature;
+      const type = this.PROVINCE_TYPE_KEY;
+      const code = event.feature.get(PROVINCE_CODE);
+      const id = SimpleFeature.createId(code, type);
+      this.featuresMap[id] = event.feature;
     });
 
     const highlightStyle = new Style({
@@ -209,16 +217,19 @@ export class MapService {
       if (feature) {
         let name = null;
         let type = null;
+        let code = null;
         if (feature.get(PROVINCE_NAME_KEY)) {
+          code = feature.get(PROVINCE_CODE);
           name = feature.get(PROVINCE_NAME_KEY);
           type = this.PROVINCE_TYPE_KEY;
         } else {
+          code = feature.get(REGION_CODE);
           name = feature.get(REGION_NAME_KEY);
           type = this.REGION_TYPE_KEY;
         }
         // info.innerHTML = name;
         this.selectedFeature = feature;
-        this.selecteFeatureSubject.next({type, name});
+        this.selecteFeatureSubject.next(new SimpleFeature(code, type, name));
         selectedFeatureLayer.getSource().addFeature(this.selectedFeature);
         console.log('Selected feature: ' + name);
       } else {
@@ -294,7 +305,7 @@ export class MapService {
   }
 
   zoomToFeature(simpleFeature: SimpleFeature) {
-    const feature = this.featuresMap[simpleFeature.name];
+    const feature = this.featuresMap[simpleFeature.id];
     if (feature) {
       const extent = feature.getGeometry().getExtent();
       this.map.getView().fit(extent, { size: this.map.getSize() });

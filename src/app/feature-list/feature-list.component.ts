@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SimpleFeature } from '../simplefeature';
 import { MapService } from '../services/map.service';
 import { HttpClient } from '@angular/common/http';
@@ -13,7 +13,7 @@ export class FeatureListComponent implements OnInit {
 
   iconListAlt = faListAlt;
   iconChevronLeft = faChevronLeft;
-
+  searchText: string;
   features: SimpleFeature[] = [];
   selectedFeature: SimpleFeature;
 
@@ -27,10 +27,27 @@ export class FeatureListComponent implements OnInit {
     .subscribe((data) => {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;
+      const features: SimpleFeature[] = [];
       textFeatures.forEach((element: { properties: { reg_name: any; }; }) => {
         const name = element.properties.reg_name;
-        this.features.push({type: this.mapService.REGION_TYPE_KEY, name});
+        features.push({type: this.mapService.REGION_TYPE_KEY, name});
       });
+      features.sort(SimpleFeature.compareOnName);
+      Array.prototype.push.apply(this.features, features);
+      // console.log(obj);
+    });
+
+    this.http.get('../../assets/data/geojson/limits_IT_provinces.geojson', {responseType: 'text'})
+    .subscribe((data) => {
+      const obj = JSON.parse(data);
+      const textFeatures = obj.features;
+      const features: SimpleFeature[] = [];
+      textFeatures.forEach((element: { properties: { prov_name: any; }; }) => {
+        const name = element.properties.prov_name;
+        features.push({type: this.mapService.PROVINCE_TYPE_KEY, name});
+      });
+      features.sort(SimpleFeature.compareOnName);
+      Array.prototype.push.apply(this.features, features);
       // console.log(obj);
     });
 

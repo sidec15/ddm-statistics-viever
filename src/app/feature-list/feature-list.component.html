@@ -1,29 +1,16 @@
-<!-- <div id="selected_feature_container">
-	<label>Selected feature: </label>
-	<div id="selected_feature"></div>
-</div> -->
-
-<!-- <div class="panel-heading">
-	<h4 class="panel-title">
-		<a data-toggle="collapse" href="#layers">
-			<i class="fa fa-list-alt"></i>
-			Layers
-		</a>
-		<span class="pull-right slide-submenu">
-			<i class="fa fa-chevron-left"></i>
-		</span>
-	</h4>
-</div> -->
-<div class="mini_sub_menu" (click)="activateSidebar()" [class.disabled]="isSidebarActive">
+<div class="moved-bottom mini-sub-menu" (click)="activateSidebar()" [class.disabled]="isSidebarActive">
 	<fa-icon [icon]="iconListAlt"></fa-icon>
 </div>
-<div id="features_container" [class.active]="isSidebarActive">
-	<div class="areas_container">
-		<div id="areas">Areas</div>
-		<fa-icon class="hide_marker" [icon]="iconChevronLeft" (click)="hideSidebar()"></fa-icon>
+<div class="moved-bottom features-container" [class.active]="isSidebarActive">
+	<div class="areas-container">
+		<div class="areas">Areas</div>
+		<fa-icon class="hide-marker" [icon]="iconChevronLeft" (click)="hideSidebar()"></fa-icon>
+	</div>
+	<div class="search-container">
+		<input class="form-control" type="search" [(ngModel)]="searchText" placeholder="Search text">
 	</div>
 	<ul class="features">
-		<li *ngFor="let feature of features" [class.selected]="feature === selectedFeature" (click)="onSelect(feature)">
+		<li *ngFor="let feature of features | filter: searchText" [class.selected]="feature === selectedFeature" (click)="onSelect(feature)">
 			<span class="badge">{{feature.type}}</span> {{feature.name}}
 		</li>
 	</ul>

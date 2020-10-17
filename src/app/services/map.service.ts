@@ -58,8 +58,6 @@ export class MapService {
 
     console.log('Called OnInit in MapComponent class!');
 
-
-
     const style = new Style({
       fill: new Fill({
         color: 'rgba(255, 255, 255, 0.6)',
@@ -97,19 +95,21 @@ export class MapService {
       this.featuresMap[event.feature.get('reg_name')] = event.feature;
     });
 
-    const layerProvices = new VectorLayer({
+    const layerProvinces = new VectorLayer({
       source: new VectorSource({
         url: GEOJSON_FILE_PROVINCES,
         format: new GeoJSON(),
       }),
-      minZoom: 8,
+      // minZoom: this.MAX_ZOOM_LEVEL_REGION,
+      opacity: 0,
+      // visible: false,
       style(feature) {
         style.getText().setText(feature.get(PROVINCE_NAME_KEY));
         return style;
       },
     });
 
-    layerProvices.getSource().on('addfeature', (event) => {
+    layerProvinces.getSource().on('addfeature', (event) => {
       this.featuresMap[event.feature.get('prov_name')] = event.feature;
     });
 
@@ -186,7 +186,7 @@ export class MapService {
         new TileLayer({
           source: new OSM(),
         }),
-        layerRegions, layerProvices, highLightedFeatureLayer, selectedFeatureLayer],
+        layerRegions, layerProvinces, highLightedFeatureLayer, selectedFeatureLayer],
       // tslint:disable-next-line: object-literal-shorthand
       target: target,
       view: new View({
@@ -224,6 +224,7 @@ export class MapService {
       } else {
         // info.innerHTML = '';
         this.selectedFeature = null;
+        this.selecteFeatureSubject.next(null);
       }
 
     };
@@ -274,7 +275,12 @@ export class MapService {
       selectFeatureFromPixel(evt.pixel);
     });
 
-    console.log('Map loaded');
+    // tslint:disable-next-line: variable-name
+    map.once('postrender', (_event) => {
+      layerProvinces.setOpacity(1);
+      layerProvinces.setMinZoom(this.MAX_ZOOM_LEVEL_REGION);
+      console.log('Map loaded');
+    });
 
     return map;
   }

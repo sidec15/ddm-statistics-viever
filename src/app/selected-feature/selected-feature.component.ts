@@ -27,4 +27,8 @@ export class SelectedFeatureComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
+
+  openStatistics(): void {
+    console.log('Open stats');
+  }
 }

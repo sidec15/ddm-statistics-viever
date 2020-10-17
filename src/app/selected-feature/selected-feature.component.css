@@ -1,8 +1,13 @@
+.moved_left {
+    left: 10px;
+}
+
 .selected_area_container {
-	background-color: #f3f3f3;
-	color: '#868686';
-    font-size: 20px;
-    padding: 10px;
+	display: inline-block;
+	/* background-color: #f8f8f8; */
+	font-size: 24px;
+	top: 10px;
+    position: relative;
 }
 
 .selected_area_container > * {
@@ -10,9 +15,14 @@
 }
 
 .selected_area {
-	width: 200px;
-	background-color: #f9f9f9;
+	width: 400px;
 	margin-left: 10px;
 	margin-right: 20px;
-	font-size: 14px;
+	font-weight: bold;
+}
+
+.open_stats {
+	position: relative;
+	top: 5px;
+	display: inline-block;
 }

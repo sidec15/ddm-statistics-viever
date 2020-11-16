@@ -15,17 +15,14 @@ import 'ol/ol.css';
 import { Pixel } from 'ol/pixel';
 import { SimpleFeature } from '../simplefeature';
 import { Subject } from 'rxjs';
+import * as constants from "../constants";
 
 const center = [12.509623, 41.913351];
 const centerMarcator = fromLonLat(center);
 
-const REGION_NAME_KEY = 'reg_name';
-const REGION_CODE = 'reg_istat_code';
-const PROVINCE_NAME_KEY = 'prov_name';
-const PROVINCE_CODE = 'prov_istat_code';
-
-const GEOJSON_FILE_REGIONS = 'assets/data/geojson/limits_IT_regions.geojson';
-const GEOJSON_FILE_PROVINCES = 'assets/data/geojson/limits_IT_provinces.geojson';
+const GEOJSON_FILE_REGIONS = 'assets/data/geojson/italy-regions.geojson';
+const GEOJSON_FILE_PROVINCES = 'assets/data/geojson/italy-provinces.geojson';
+const GEOJSON_FILE_MUNICIPALITIES = 'assets/data/geojson/italy-municipalities_cut.geojson';
 
 @Injectable({
   providedIn: 'root'
@@ -37,13 +34,16 @@ export class MapService {
   highlightedFeature: Feature = null;
   map: Map;
   featureOvrelay: VectorLayer;
-  REGION_NAME_KEY = REGION_NAME_KEY;
-  REGION_TYPE_KEY = 'REG';
+  REGION_NAME_KEY = constants.REGION_NAME_KEY;
+  REGION_TYPE_KEY = constants.REGION_TYPE_KEY;
   GEOJSON_FILE_REGIONS = GEOJSON_FILE_REGIONS;
   MAX_ZOOM_LEVEL_REGION = 8;
-  PROVINCE_NAME_KEY = PROVINCE_NAME_KEY;
-  PROVINCE_TYPE_KEY = 'PROV';
+  PROVINCE_NAME_KEY = constants.PROVINCE_NAME_KEY;
+  PROVINCE_TYPE_KEY = constants.PROVINCE_TYPE_KEY;
   GEOJSON_FILE_PROVINCES = GEOJSON_FILE_PROVINCES;
+  MUNICIPALITY_NAME_KEY = constants.MUNICIPALITY_NAME_KEY;
+  MUNICIPALITY_TYPE_KEY = constants.MUNICIPALITY_TYPE_KEY;
+  GEOJSON_FILE_MUNICIPALITIES = GEOJSON_FILE_MUNICIPALITIES;
   private isSidebarActiveSubject = new Subject<boolean>();
   isSidebarActiveObservable = this.isSidebarActiveSubject.asObservable();
   private selecteFeatureSubject = new Subject<SimpleFeature>();
@@ -88,14 +88,14 @@ export class MapService {
       }),
       maxZoom: this.MAX_ZOOM_LEVEL_REGION,
       style(feature) {
-        style.getText().setText(feature.get(REGION_NAME_KEY));
+        style.getText().setText(feature.get(constants.REGION_NAME_KEY));
         return style;
       },
     });
 
     layerRegions.getSource().on('addfeature', (event) => {
       const type = this.REGION_TYPE_KEY;
-      const code = event.feature.get(REGION_CODE);
+      const code = event.feature.get(constants.REGION_CODE);
       const id = SimpleFeature.createId(code, type);
       this.featuresMap[id] = event.feature;
     });
@@ -105,18 +105,18 @@ export class MapService {
         url: GEOJSON_FILE_PROVINCES,
         format: new GeoJSON(),
       }),
-      // minZoom: this.MAX_ZOOM_LEVEL_REGION,
+      minZoom: this.MAX_ZOOM_LEVEL_REGION,
       opacity: 0,
-      // visible: false,
+      // visible: true,
       style(feature) {
-        style.getText().setText(feature.get(PROVINCE_NAME_KEY));
+        style.getText().setText(feature.get(constants.PROVINCE_NAME_KEY));
         return style;
       },
     });
 
     layerProvinces.getSource().on('addfeature', (event) => {
       const type = this.PROVINCE_TYPE_KEY;
-      const code = event.feature.get(PROVINCE_CODE);
+      const code = event.feature.get(constants.PROVINCE_CODE);
       const id = SimpleFeature.createId(code, type);
       this.featuresMap[id] = event.feature;
     });
@@ -165,10 +165,10 @@ export class MapService {
       source: new VectorSource(),
       style(feature) {
         let name = null;
-        if (feature.get(PROVINCE_NAME_KEY)) {
-          name = feature.get(PROVINCE_NAME_KEY);
+        if (feature.get(constants.PROVINCE_NAME_KEY)) {
+          name = feature.get(constants.PROVINCE_NAME_KEY);
         } else {
-          name = feature.get(REGION_NAME_KEY);
+          name = feature.get(constants.REGION_NAME_KEY);
         }
         // highlightStyle.getText().setText(name);
         return highlightStyle;
@@ -179,10 +179,10 @@ export class MapService {
       source: new VectorSource(),
       style(feature) {
         let name = null;
-        if (feature.get(PROVINCE_NAME_KEY)) {
-          name = feature.get(PROVINCE_NAME_KEY);
+        if (feature.get(constants.PROVINCE_NAME_KEY)) {
+          name = feature.get(constants.PROVINCE_NAME_KEY);
         } else {
-          name = feature.get(REGION_NAME_KEY);
+          name = feature.get(constants.REGION_NAME_KEY);
         }
         // highlightStyle.getText().setText(name);
         return selectStyle;
@@ -218,13 +218,13 @@ export class MapService {
         let name = null;
         let type = null;
         let code = null;
-        if (feature.get(PROVINCE_NAME_KEY)) {
-          code = feature.get(PROVINCE_CODE);
-          name = feature.get(PROVINCE_NAME_KEY);
+        if (feature.get(constants.PROVINCE_NAME_KEY)) {
+          code = feature.get(constants.PROVINCE_CODE);
+          name = feature.get(constants.PROVINCE_NAME_KEY);
           type = this.PROVINCE_TYPE_KEY;
         } else {
-          code = feature.get(REGION_CODE);
-          name = feature.get(REGION_NAME_KEY);
+          code = feature.get(constants.REGION_CODE);
+          name = feature.get(constants.REGION_NAME_KEY);
           type = this.REGION_TYPE_KEY;
         }
         // info.innerHTML = name;

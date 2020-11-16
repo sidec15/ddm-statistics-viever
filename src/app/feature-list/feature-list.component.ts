@@ -23,15 +23,16 @@ export class FeatureListComponent implements OnInit {
 
   ngOnInit() {
 
-    this.http.get('../../assets/data/geojson/limits_IT_regions.geojson', {responseType: 'text'})
+    this.http.get('../../assets/data/geojson/italy-regions.geojson', {responseType: 'text'})
     .subscribe((data) => {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;
       const features: SimpleFeature[] = [];
-      textFeatures.forEach((element: { properties: { reg_istat_code: string; reg_name: string; }; }) => {
+      textFeatures.forEach((element: { properties: { code: string; reg_name: string; }; }) => {
         // features.push({type: this.mapService.REGION_TYPE_KEY, name});
+        let code = element.properties.code;
         features.push(new SimpleFeature(
-          element.properties.reg_istat_code
+          code
           , this.mapService.REGION_TYPE_KEY
           , element.properties.reg_name
           )
@@ -42,15 +43,16 @@ export class FeatureListComponent implements OnInit {
       // console.log(obj);
     });
 
-    this.http.get('../../assets/data/geojson/limits_IT_provinces.geojson', {responseType: 'text'})
+    this.http.get('../../assets/data/geojson/italy-provinces.geojson', {responseType: 'text'})
     .subscribe((data) => {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;
       const features: SimpleFeature[] = [];
-      textFeatures.forEach((element: { properties: { prov_istat_code: string; prov_name: string; }; }) => {
+      textFeatures.forEach((element: { properties: { code: string; prov_name: string; }; }) => {
         // features.push({type: this.mapService.PROVINCE_TYPE_KEY, name});
+          let code = element.properties.code;
           features.push(new SimpleFeature(
-            element.properties.prov_istat_code
+            code
             , this.mapService.PROVINCE_TYPE_KEY
             , element.properties.prov_name
             )

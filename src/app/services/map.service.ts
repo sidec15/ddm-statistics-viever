@@ -22,7 +22,7 @@ const centerMarcator = fromLonLat(center);
 
 const GEOJSON_FILE_REGIONS = 'assets/data/geojson/italy-regions.geojson';
 const GEOJSON_FILE_PROVINCES = 'assets/data/geojson/italy-provinces.geojson';
-const GEOJSON_FILE_MUNICIPALITIES = 'assets/data/geojson/italy-municipalities_cut.geojson';
+const GEOJSON_FILE_MUNICIPALITIES = 'assets/data/geojson/italy-municipailities_cut.geojson';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +38,7 @@ export class MapService {
   REGION_TYPE_KEY = constants.REGION_TYPE_KEY;
   GEOJSON_FILE_REGIONS = GEOJSON_FILE_REGIONS;
   MAX_ZOOM_LEVEL_REGION = 8;
+  MAX_ZOOM_LEVEL_PROVINCE = 5;
   PROVINCE_NAME_KEY = constants.PROVINCE_NAME_KEY;
   PROVINCE_TYPE_KEY = constants.PROVINCE_TYPE_KEY;
   GEOJSON_FILE_PROVINCES = GEOJSON_FILE_PROVINCES;
@@ -94,7 +95,7 @@ export class MapService {
     });
 
     layerRegions.getSource().on('addfeature', (event) => {
-      const type = this.REGION_TYPE_KEY;
+      const type = constants.REGION_TYPE_KEY;
       const code = event.feature.get(constants.REGION_CODE);
       const id = SimpleFeature.createId(code, type);
       this.featuresMap[id] = event.feature;
@@ -106,6 +107,7 @@ export class MapService {
         format: new GeoJSON(),
       }),
       minZoom: this.MAX_ZOOM_LEVEL_REGION,
+      maxZoom: this.MAX_ZOOM_LEVEL_PROVINCE,
       opacity: 0,
       // visible: true,
       style(feature) {
@@ -115,19 +117,40 @@ export class MapService {
     });
 
     layerProvinces.getSource().on('addfeature', (event) => {
-      const type = this.PROVINCE_TYPE_KEY;
+      const type = constants.PROVINCE_TYPE_KEY;
       const code = event.feature.get(constants.PROVINCE_CODE);
+      const id = SimpleFeature.createId(code, type);
+      this.featuresMap[id] = event.feature;
+    });
+
+    const layerMunicipalities = new VectorLayer({
+      source: new VectorSource({
+        url: GEOJSON_FILE_MUNICIPALITIES,
+        format: new GeoJSON(),
+      }),
+      minZoom: this.MAX_ZOOM_LEVEL_PROVINCE,
+      opacity: 0,
+      // visible: true,
+      style(feature) {
+        style.getText().setText(feature.get(constants.MUNICIPALITY_NAME_KEY));
+        return style;
+      },
+    });
+
+    layerMunicipalities.getSource().on('addfeature', (event) => {
+      const type = constants.MUNICIPALITY_TYPE_KEY;
+      const code = event.feature.get(constants.MUNICIPALITY_CODE);
       const id = SimpleFeature.createId(code, type);
       this.featuresMap[id] = event.feature;
     });
 
     const highlightStyle = new Style({
       stroke: new Stroke({
-        color: 'rgba(0,0,255,0.5)',
+        color: 'rgba(0,0,255,1)',
         width: 1,
       }),
       fill: new Fill({
-        color: 'rgba(0,0,255,0.1)',
+        color: 'rgba(0,0,255,0.5)',
       }),
       // text: new Text({
       //   font: '16px Calibri,sans-serif',
@@ -143,11 +166,11 @@ export class MapService {
 
     const selectStyle = new Style({
       stroke: new Stroke({
-        color: 'rgba(255,0,0,0.5)',
+        color: 'rgba(255,0,0,1)',
         width: 1,
       }),
       fill: new Fill({
-        color: 'rgba(255,0,0,0.1)',
+        color: 'rgba(255,0,0,0.5)',
       }),
       // text: new Text({
       //   font: '16px Calibri,sans-serif',
@@ -164,12 +187,12 @@ export class MapService {
     const highLightedFeatureLayer = new VectorLayer({
       source: new VectorSource(),
       style(feature) {
-        let name = null;
-        if (feature.get(constants.PROVINCE_NAME_KEY)) {
-          name = feature.get(constants.PROVINCE_NAME_KEY);
-        } else {
-          name = feature.get(constants.REGION_NAME_KEY);
-        }
+        // let name = null;
+        // if (feature.get(constants.PROVINCE_NAME_KEY)) {
+        //   name = feature.get(constants.PROVINCE_NAME_KEY);
+        // } else {
+        //   name = feature.get(constants.REGION_NAME_KEY);
+        // }
         // highlightStyle.getText().setText(name);
         return highlightStyle;
       },
@@ -177,16 +200,17 @@ export class MapService {
 
     const selectedFeatureLayer = new VectorLayer({
       source: new VectorSource(),
-      style(feature) {
-        let name = null;
-        if (feature.get(constants.PROVINCE_NAME_KEY)) {
-          name = feature.get(constants.PROVINCE_NAME_KEY);
-        } else {
-          name = feature.get(constants.REGION_NAME_KEY);
-        }
-        // highlightStyle.getText().setText(name);
-        return selectStyle;
-      },
+      style: selectStyle,
+      // style(feature) {
+      //   let name = null;
+      //   if (feature.get(constants.PROVINCE_NAME_KEY)) {
+      //     name = feature.get(constants.PROVINCE_NAME_KEY);
+      //   } else {
+      //     name = feature.get(constants.REGION_NAME_KEY);
+      //   }
+      //   selectStyle.getText().setText(name);
+      //   return selectStyle;
+      // },
     });
 
     const map = new Map({
@@ -194,7 +218,7 @@ export class MapService {
         new TileLayer({
           source: new OSM(),
         }),
-        layerRegions, layerProvinces, highLightedFeatureLayer, selectedFeatureLayer],
+        highLightedFeatureLayer, selectedFeatureLayer, layerRegions, layerProvinces, layerMunicipalities],
       // tslint:disable-next-line: object-literal-shorthand
       target: target,
       view: new View({
@@ -218,14 +242,19 @@ export class MapService {
         let name = null;
         let type = null;
         let code = null;
-        if (feature.get(constants.PROVINCE_NAME_KEY)) {
+        if (feature.get(constants.MUNICIPALITY_NAME_KEY)) {
+          code = feature.get(constants.MUNICIPALITY_CODE);
+          name = feature.get(constants.MUNICIPALITY_NAME_KEY);
+          type = constants.MUNICIPALITY_TYPE_KEY;
+        }
+        else if (feature.get(constants.PROVINCE_NAME_KEY)) {
           code = feature.get(constants.PROVINCE_CODE);
           name = feature.get(constants.PROVINCE_NAME_KEY);
-          type = this.PROVINCE_TYPE_KEY;
+          type = constants.PROVINCE_TYPE_KEY;
         } else {
           code = feature.get(constants.REGION_CODE);
           name = feature.get(constants.REGION_NAME_KEY);
-          type = this.REGION_TYPE_KEY;
+          type = constants.REGION_TYPE_KEY;
         }
         // info.innerHTML = name;
         this.selectedFeature = feature;
@@ -312,8 +341,10 @@ export class MapService {
       let zoomLevel = null;
       if (simpleFeature.type === this.REGION_TYPE_KEY) {
         zoomLevel = this.MAX_ZOOM_LEVEL_REGION;
-      } else {
+      } else if (simpleFeature.type === this.PROVINCE_TYPE_KEY) {
         zoomLevel = this.MAX_ZOOM_LEVEL_REGION + 1;
+      } else {
+        zoomLevel = this.MAX_ZOOM_LEVEL_PROVINCE + 1;
       }
       this.map.getView().setZoom(zoomLevel);
     }

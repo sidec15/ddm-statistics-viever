@@ -73,9 +73,11 @@
 }
 
 .hide-marker {
-    float: right;
-    margin-right: 10px;
-    margin-top: 10px;
+    position: relative;
+    /* right: 0; */
+    /* margin-bottom: 20px; */
+    display: inline-block;
+    left: 240px;
     cursor: pointer;
     background-color: rgb(175 175 175);
     /* display: inline-block; */

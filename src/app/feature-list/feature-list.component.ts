@@ -38,8 +38,8 @@ export class FeatureListComponent implements OnInit {
           )
         );
       });
-      features.sort(SimpleFeature.compareOnName);
       Array.prototype.push.apply(this.features, features);
+      this.features.sort(SimpleFeature.compareOnTypeAndName);
       // console.log(obj);
     });
 
@@ -58,8 +58,28 @@ export class FeatureListComponent implements OnInit {
             )
           );
       });
-      features.sort(SimpleFeature.compareOnName);
       Array.prototype.push.apply(this.features, features);
+      this.features.sort(SimpleFeature.compareOnTypeAndName);
+      // console.log(obj);
+    });
+
+    this.http.get('../../assets/data/geojson/italy-municipailities_cut.geojson', {responseType: 'text'})
+    .subscribe((data) => {
+      const obj = JSON.parse(data);
+      const textFeatures = obj.features;
+      const features: SimpleFeature[] = [];
+      textFeatures.forEach((element: { properties: { code: string; name: string; }; }) => {
+        // features.push({type: this.mapService.PROVINCE_TYPE_KEY, name});
+          let code = element.properties.code;
+          features.push(new SimpleFeature(
+            code
+            , this.mapService.MUNICIPALITY_TYPE_KEY
+            , element.properties.name
+            )
+          );
+      });
+      Array.prototype.push.apply(this.features, features);
+      this.features.sort(SimpleFeature.compareOnTypeAndName);
       // console.log(obj);
     });
 

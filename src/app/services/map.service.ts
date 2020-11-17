@@ -37,8 +37,8 @@ export class MapService {
   REGION_NAME_KEY = constants.REGION_NAME_KEY;
   REGION_TYPE_KEY = constants.REGION_TYPE_KEY;
   GEOJSON_FILE_REGIONS = GEOJSON_FILE_REGIONS;
-  MAX_ZOOM_LEVEL_REGION = 8;
-  MAX_ZOOM_LEVEL_PROVINCE = 5;
+  MAX_ZOOM_LEVEL_REGION = 7.5;
+  MAX_ZOOM_LEVEL_PROVINCE = 9.5;
   PROVINCE_NAME_KEY = constants.PROVINCE_NAME_KEY;
   PROVINCE_TYPE_KEY = constants.PROVINCE_TYPE_KEY;
   GEOJSON_FILE_PROVINCES = GEOJSON_FILE_PROVINCES;
@@ -61,24 +61,28 @@ export class MapService {
 
     console.log('Called OnInit in MapComponent class!');
 
-    const style = new Style({
+    const fill = new Fill({
+      color: 'rgba(255, 255, 255, 0.6)',
+    });
+    const stroke = new Stroke({
+      color: '#319FD3',
+      width: 1,
+    });
+    const text = new Text({
+      font: '16px Calibri,sans-serif',
       fill: new Fill({
-        color: 'rgba(255, 255, 255, 0.6)',
+        color: '#000',
       }),
       stroke: new Stroke({
-        color: '#319FD3',
-        width: 1,
+        color: '#fff',
+        width: 3,
       }),
-      text: new Text({
-        font: '16px Calibri,sans-serif',
-        fill: new Fill({
-          color: '#000',
-        }),
-        stroke: new Stroke({
-          color: '#fff',
-          width: 3,
-        }),
-      }),
+    });
+
+    const style = new Style({
+      fill: fill,
+      stroke: stroke,
+      text: text
     });
 
 
@@ -106,7 +110,7 @@ export class MapService {
         url: GEOJSON_FILE_PROVINCES,
         format: new GeoJSON(),
       }),
-      minZoom: this.MAX_ZOOM_LEVEL_REGION,
+      // minZoom: this.MAX_ZOOM_LEVEL_REGION,
       maxZoom: this.MAX_ZOOM_LEVEL_PROVINCE,
       opacity: 0,
       // visible: true,
@@ -123,12 +127,25 @@ export class MapService {
       this.featuresMap[id] = event.feature;
     });
 
+
+    const fill_mun = new Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    });
+    const stroke_mun = new Stroke({
+      color: '#319FD3',
+      width: 1,
+    });
+    const style_mun = new Style({
+      fill: fill_mun,
+      stroke: stroke_mun,
+      text: text
+    });
     const layerMunicipalities = new VectorLayer({
       source: new VectorSource({
         url: GEOJSON_FILE_MUNICIPALITIES,
         format: new GeoJSON(),
       }),
-      minZoom: this.MAX_ZOOM_LEVEL_PROVINCE,
+      // minZoom: this.MAX_ZOOM_LEVEL_PROVINCE,
       opacity: 0,
       // visible: true,
       style(feature) {
@@ -218,7 +235,11 @@ export class MapService {
         new TileLayer({
           source: new OSM(),
         }),
-        highLightedFeatureLayer, selectedFeatureLayer, layerRegions, layerProvinces, layerMunicipalities],
+        highLightedFeatureLayer, selectedFeatureLayer
+        , layerRegions
+        , layerProvinces
+        , layerMunicipalities
+      ],
       // tslint:disable-next-line: object-literal-shorthand
       target: target,
       view: new View({
@@ -319,8 +340,20 @@ export class MapService {
     map.once('postrender', (_event) => {
       layerProvinces.setOpacity(1);
       layerProvinces.setMinZoom(this.MAX_ZOOM_LEVEL_REGION);
+      layerMunicipalities.setOpacity(1);
+      layerMunicipalities.setMinZoom(this.MAX_ZOOM_LEVEL_PROVINCE);
       console.log('Map loaded');
     });
+
+    let currZoom = null;
+    map.on('moveend', function(e) {
+      var newZoom = map.getView().getZoom();
+      if (currZoom != newZoom) {
+        console.log('zoom end, new zoom: ' + newZoom);
+        currZoom = newZoom;
+      }
+    });
+
 
     return map;
   }
@@ -342,9 +375,9 @@ export class MapService {
       if (simpleFeature.type === this.REGION_TYPE_KEY) {
         zoomLevel = this.MAX_ZOOM_LEVEL_REGION;
       } else if (simpleFeature.type === this.PROVINCE_TYPE_KEY) {
-        zoomLevel = this.MAX_ZOOM_LEVEL_REGION + 1;
+        zoomLevel = this.MAX_ZOOM_LEVEL_PROVINCE;
       } else {
-        zoomLevel = this.MAX_ZOOM_LEVEL_PROVINCE + 1;
+        zoomLevel = this.MAX_ZOOM_LEVEL_PROVINCE + 2;
       }
       this.map.getView().setZoom(zoomLevel);
     }

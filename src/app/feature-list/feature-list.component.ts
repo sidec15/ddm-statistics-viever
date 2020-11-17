@@ -1,3 +1,5 @@
+import * as constants from "../constants";
+
 import { Component, OnInit } from '@angular/core';
 import { SimpleFeature } from '../simplefeature';
 import { MapService } from '../services/map.service';
@@ -23,7 +25,7 @@ export class FeatureListComponent implements OnInit {
 
   ngOnInit() {
 
-    this.http.get('../../assets/data/geojson/italy-regions.geojson', {responseType: 'text'})
+    this.http.get(constants.GEOJSON_FILE_REGIONS, {responseType: 'text'})
     .subscribe((data) => {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;
@@ -43,7 +45,7 @@ export class FeatureListComponent implements OnInit {
       // console.log(obj);
     });
 
-    this.http.get('../../assets/data/geojson/italy-provinces.geojson', {responseType: 'text'})
+    this.http.get(constants.GEOJSON_FILE_PROVINCES, {responseType: 'text'})
     .subscribe((data) => {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;
@@ -63,7 +65,7 @@ export class FeatureListComponent implements OnInit {
       // console.log(obj);
     });
 
-    this.http.get('../../assets/data/geojson/italy-municipailities_cut.geojson', {responseType: 'text'})
+    this.http.get(constants.GEOJSON_FILE_MUNICIPALITIES, {responseType: 'text'})
     .subscribe((data) => {
       const obj = JSON.parse(data);
       const textFeatures = obj.features;

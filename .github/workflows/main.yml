@@ -11,8 +11,8 @@ on:
 #
 # 2. Change these variables for your configuration:
 env:
-  AZURE_WEBAPP_NAME: yddm-statistics-viewer                   # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: './dist/ddm-statisstics-viewer'  # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_NAME: ddm-statistics-viewer                    # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: './dist/ddm-statistics-viewer'   # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '10.x'                                        # set this to the node version to use
 
 jobs:

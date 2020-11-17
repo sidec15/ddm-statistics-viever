@@ -40,19 +40,19 @@ export class SelectedFeatureComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const url1 = [feature.get_blob_name(), LOC_GENERAL_STATISTICS_DAYTYPE_BASED].join("/");
       window.open(url1);
-    }, 1000);
+    }, 300);
     setTimeout(() => {
       const url1 = [feature.get_blob_name(), LOC_REGIONAL_STATISTICS].join("/");
       window.open(url1);
-    }, 1000);
+    }, 300);
     setTimeout(() => {
       const url1 = [feature.get_blob_name(), LOC_GENERAL_STATISTICS].join("/");
       window.open(url1);
-    }, 1000);
+    }, 300);
     setTimeout(() => {
       const url1 = [feature.get_blob_name(), LOC_TRAJECTORY_STATISTICS].join("/");
       window.open(url1);
-    }, 500);    
+    }, 100);    
 
   }
 }

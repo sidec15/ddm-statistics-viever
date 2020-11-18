@@ -48,7 +48,7 @@ export class SelectedFeatureComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const url1 = [feature.get_blob_name(), LOC_GENERAL_STATISTICS].join("/");
       window.open(url1);
-    }, 300);
+    }, 100);
     setTimeout(() => {
       const url1 = [feature.get_blob_name(), LOC_TRAJECTORY_STATISTICS].join("/");
       window.open(url1);

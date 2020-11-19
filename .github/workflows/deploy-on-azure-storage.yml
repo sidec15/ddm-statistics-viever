@@ -3,7 +3,7 @@ name: Deploy app on Azure Blob Storage
 on: [push]
 
 env:
-  STORAGE_ACCOUNT_NAME: "MDF 2020 Azure Sponsorship"                   
+  STORAGE_ACCOUNT_NAME: "ddmstatisticsviewer"                   
   RESOURCE_GROUP: 'ddm-statistics-viewer-rg'
   EXPORT_SOURCE_PATH: './dist/ddm-statistics-viewer'
   NODE_VERSION: '10.x'

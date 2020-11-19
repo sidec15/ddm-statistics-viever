@@ -1,12 +1,50 @@
 on: [push]
 
-name: AzureLoginSample
+name: Deploy app on Azure Blob Storage
+
+env:
+  STORAGE_ACCOUNT_NAME: "MDF 2020 Azure Sponsorship"                   
+  RESOURCE_GROUP: 'ddm-statistics-viewer-rg'
+  EXPORT_SOURCE_PATH: './dist/ddm-statistics-viewer'
+  NODE_VERSION: '10.x'
+
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: '${{ secrets.AZURE_STORAGE_STATIC_PUBLISH_PROFILE }}'
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: npm install and build
+      run: |
+        # Build and the project, then
+        # deploy to Azure Web App.
+        npm install
+        npm run build --if-present
+        #npm run test --if-present    
+    - name: Log in with Azure
+      uses: azure/login@v1
+      with:
+        creds: '${{ secrets.AZURE_STORAGE_STATIC_PUBLISH_PROFILE }}'
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+          azcliversion: 2.0.72
+          inlineScript: |
+              az storage blob upload-batch --account-name '${{ env.STORAGE_ACCOUNT_NAME }}' -d '$web' -s '${{ env.EXPORT_SOURCE_PATH }}'
+      # - name: Azure CLI script
+      # uses: azure/CLI@v1
+      # with:
+      #     azcliversion: 2.0.72
+      #     inlineScript: |
+      #     az cdn endpoint purge --content-paths  "/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "${{ env.RESOURCE_GROUP }}"
+      # Azure logout 
+      - name: Azure logout
+        run: |
+              az logout

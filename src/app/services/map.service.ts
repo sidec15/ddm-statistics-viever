@@ -238,7 +238,7 @@ export class MapService {
       view: new View({
         projection: 'EPSG:3857',
         center: centerMarcator,
-        zoom: 6
+        zoom: 5.5
       }),
     });
 
